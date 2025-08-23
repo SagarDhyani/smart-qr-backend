@@ -26,4 +26,19 @@ const createUser = async ({ name, email, password, companyName }) => {
   return { user: newUser, token };
 };
 
-module.exports = createUser;
+const userLogin = async ({ email, password }) => {
+  const user = await User.findOne({ email });
+  if (!user) throw new Error("User not registered!");
+
+  const isMatchPassword = await bcrypt.compare(password, user.password);
+
+  if (!isMatchPassword) throw new Error("password is incorrect!");
+  const secretKey = process.env.JWT_SECRET;
+  const token = jwt.sign({ userId: user._id, email: user.email }, secretKey, {
+    expiresIn: "7d",
+  });
+
+  return { user, token };
+};
+
+module.exports = { createUser, userLogin };

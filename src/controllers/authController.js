@@ -1,4 +1,4 @@
-const createUser = require("../services/authService");
+const { createUser, userLogin } = require("../services/authService");
 
 const signUp = async (req, res) => {
   const { name, email, password, companyName } = req.body;
@@ -10,8 +10,6 @@ const signUp = async (req, res) => {
     companyName,
   });
 
-  console.log({ user });
-
   res.status(201).json({
     message: `User ${user.name} registered successfully!`,
     user,
@@ -19,4 +17,20 @@ const signUp = async (req, res) => {
   });
 };
 
-module.exports = { signUp };
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  const { user, token } = await userLogin({email, password});
+
+  res.status(200).json({
+    message: "Login Successful!",
+    user: {
+      id: user._id,
+      email: user.email,
+      plan: user.plan,
+      companyName: user.companyName,
+    },
+    token,
+  });
+};
+
+module.exports = { signUp, login };
