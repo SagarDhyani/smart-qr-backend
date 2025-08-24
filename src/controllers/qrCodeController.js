@@ -1,4 +1,7 @@
-const { createQrCodeService } = require("../services/qrCodeService");
+const {
+  createQrCodeService,
+  getAllQrCodesByUserId,
+} = require("../services/qrCodeService");
 
 const createQrCode = async (req, res) => {
   const { destinationUrl, qrname } = req.body;
@@ -14,6 +17,23 @@ const createQrCode = async (req, res) => {
   });
 };
 
+const getUserQrCodes = async (req, res) => {
+  const { userId } = req.query;
+
+  if (!userId) throw new Error("Please provide a valid userId");
+
+  const { qrDetails } = await getAllQrCodesByUserId(userId);
+
+  res.status(200).json({
+    success: true,
+    data: {
+      qrDetails,
+    },
+    message: "Qr Codes retrived successfully",
+  });
+};
+
 module.exports = {
   createQrCode,
+  getUserQrCodes,
 };

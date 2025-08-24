@@ -27,4 +27,10 @@ const createQrCodeService = async (userId, { destinationUrl, qrname }) => {
   };
 };
 
-module.exports = { createQrCodeService };
+const getAllQrCodesByUserId = async (userId) => {
+  const qrDetails = await qrCode.find({ userId }).lean();
+  if (!qrDetails) throw new Error("Not found");
+  return { qrDetails };
+};
+
+module.exports = { createQrCodeService, getAllQrCodesByUserId };
